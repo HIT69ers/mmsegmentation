@@ -488,6 +488,35 @@ def hsidrive_palette():
             [255, 166, 0], [0, 204, 204]]
 
 
+def nyuv2_classes():
+    return [
+        "wall", "floor",  "cabinet","bed","chair",
+        "sofa","table","door","window","bookshelf","picture",
+        "counter","blinds","desk","shelves","curtain","dresser",
+        "pillow","mirror","floor mat","clothes","ceiling",
+        "books","refridgerator","television","paper","towel",
+        "shower curtain","box","whiteboard","person","night stand",
+        "toilet","sink","lamp","bathtub","bag",
+        "otherstructure","otherfurniture","otherprop",
+    ]
+
+
+def nyuv2_palette():
+    return  [
+        [128,   0,   0], [  0, 128,   0], [128, 128,   0],
+        [  0,   0, 128], [128,   0, 128], [  0, 128, 128], [128, 128, 128],
+        [ 64,   0,   0], [192,   0,   0], [ 64, 128,   0], [192, 128,   0],
+        [ 64,   0, 128], [192,   0, 128], [ 64, 128, 128], [192, 128, 128],
+        [  0,  64,   0], [128,  64,   0], [  0, 192,   0], [128, 192,   0],
+        [  0,  64, 128], [128,  64, 128], [  0, 192, 128], [128, 192, 128],
+        [ 64,  64,   0], [192,  64,   0], [ 64, 192,   0], [192, 192,   0],
+        [ 64,  64, 128], [192,  64, 128], [ 64, 192, 128], [192, 192, 128],
+        [  0,   0,  64], [128,   0,  64], [  0, 128,  64], [128, 128,  64],
+        [  0,   0, 192], [128,   0, 192], [  0, 128, 192], [128, 128, 192],
+        [ 64,   0,  64]
+    ]
+
+
 dataset_aliases = {
     'cityscapes': ['cityscapes'],
     'ade': ['ade', 'ade20k'],
@@ -510,7 +539,8 @@ dataset_aliases = {
     'hsidrive': [
         'hsidrive', 'HSIDrive', 'HSI-Drive', 'hsidrive20', 'HSIDrive20',
         'HSI-Drive20'
-    ]
+    ],
+    'nyuv2': ['nyuv2']
 }
 
 

@@ -8,7 +8,7 @@ from mmseg.datasets import NYUV2Dataset
 init_default_scope('mmseg')
 
 data_root = 'data/nyuv2'
-data_prefix = dict(img_path='images/train', depth_map_path='annotations/train')
+data_prefix = dict(img_path='images/train', seg_map_path='annotations/train')
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -18,7 +18,7 @@ train_pipeline = [
     dict(type='PackSegInputs')
 ]
 
-dataset = NYUV2Dataset(data_root=data_root, data_prefix=data_prefix, test_mode=False, pipeline=train_pipeline, reduce_zero_label=False)
+dataset = NYUV2Dataset(data_root=data_root, data_prefix=data_prefix, test_mode=False, pipeline=train_pipeline, reduce_zero_label=True)
 
 print(len(dataset))
 print(dataset.get_data_info(0))

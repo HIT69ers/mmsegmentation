@@ -10,7 +10,7 @@ from .basesegdataset import BaseSegDataset
 
 @DATASETS.register_module()
 class NYUV2Dataset(BaseSegDataset):
-    """NYU depth estimation dataset. The file structure should be.
+    """NYUV2 segmentation dataset. The file structure should be.
 
     .. code-block:: none
 
@@ -34,7 +34,7 @@ class NYUV2Dataset(BaseSegDataset):
         data_root (str, optional): The root directory for ``data_prefix`` and
             ``ann_file``. Defaults to None.
         data_prefix (dict, optional): Prefix for training data. Defaults to
-            dict(img_path='images', depth_map_path='annotations').
+            dict(img_path='images', seg_map_path='annotations').
         img_suffix (str): Suffix of images. Default: '.jpg'
         seg_map_suffix (str): Suffix of segmentation maps. Default: '.png'
         filter_cfg (dict, optional): Config for filter data. Defaults to None.
@@ -65,57 +65,36 @@ class NYUV2Dataset(BaseSegDataset):
             Notes: mmcv>=2.0.0rc4, mmengine>=0.2.0 required.
     """
     METAINFO = dict(
-        classes=("wall",
-    "floor",
-    "cabinet",
-    "bed",
-    "chair",
-    "sofa",
-    "table",
-    "door",
-    "window",
-    "bookshelf",
-    "picture",
-    "counter",
-    "blinds",
-    "desk",
-    "shelves",
-    "curtain",
-    "dresser",
-    "pillow",
-    "mirror",
-    "floor mat",
-    "clothes",
-    "ceiling",
-    "books",
-    "refridgerator",
-    "television",
-    "paper",
-    "towel",
-    "shower curtain",
-    "box",
-    "whiteboard",
-    "person",
-    "night stand",
-    "toilet",
-    "sink",
-    "lamp",
-    "bathtub",
-    "bag",
-    "otherstructure",
-    "otherfurniture",
-    "otherprop",))
+        classes=("wall", "floor",  "cabinet","bed","chair",
+                "sofa","table","door","window","bookshelf","picture",
+                "counter","blinds","desk","shelves","curtain","dresser",
+                "pillow","mirror","floor mat","clothes","ceiling",
+                "books","refridgerator","television","paper","towel",
+                "shower curtain","box","whiteboard","person","night stand",
+                "toilet","sink","lamp","bathtub","bag",
+                "otherstructure","otherfurniture","otherprop",),
+        palette=[[128,   0,   0], [  0, 128,   0], [128, 128,   0],
+                [  0,   0, 128], [128,   0, 128], [  0, 128, 128], [128, 128, 128],
+                [ 64,   0,   0], [192,   0,   0], [ 64, 128,   0], [192, 128,   0],
+                [ 64,   0, 128], [192,   0, 128], [ 64, 128, 128], [192, 128, 128],
+                [  0,  64,   0], [128,  64,   0], [  0, 192,   0], [128, 192,   0],
+                [  0,  64, 128], [128,  64, 128], [  0, 192, 128], [128, 192, 128],
+                [ 64,  64,   0], [192,  64,   0], [ 64, 192,   0], [192, 192,   0],
+                [ 64,  64, 128], [192,  64, 128], [ 64, 192, 128], [192, 192, 128],
+                [  0,   0,  64], [128,   0,  64], [  0, 128,  64], [128, 128,  64],
+                [  0,   0, 192], [128,   0, 192], [  0, 128, 192], [128, 128, 192],
+                [ 64,   0,  64]])
 
     def __init__(self,
                  data_prefix=dict(
-                     img_path='images', depth_map_path='annotations'),
+                     img_path='images', seg_map_path='annotations'),
                  img_suffix='.jpg',
-                 depth_map_suffix='.png',
+                 seg_map_suffix='.png',
                  **kwargs) -> None:
         super().__init__(
             data_prefix=data_prefix,
             img_suffix=img_suffix,
-            seg_map_suffix=depth_map_suffix,
+            seg_map_suffix=seg_map_suffix,
             **kwargs)
 
     def _get_category_id_from_filename(self, image_fname: str) -> int:
@@ -136,7 +115,7 @@ class NYUV2Dataset(BaseSegDataset):
         """
         data_list = []
         img_dir = self.data_prefix.get('img_path', None)
-        ann_dir = self.data_prefix.get('depth_map_path', None)
+        ann_dir = self.data_prefix.get('seg_map_path', None)
 
         _suffix_len = len(self.img_suffix)
         for img in fileio.list_dir_or_file(
