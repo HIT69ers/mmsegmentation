@@ -4,23 +4,22 @@ _base_ = [
 ]
 crop_size = (480, 640)
 data_preprocessor = dict(size=crop_size)
-checkpoint_file = 'https://download.openmmlab.com/mmclassification/v0/convnext/downstream/convnext-tiny_3rdparty_32xb128-noema_in1k_20220301-795e9634.pth'  # noqa
+checkpoint_file = 'https://download.openmmlab.com/mmclassification/v0/convnext/downstream/convnext-small_3rdparty_32xb128-noema_in1k_20220301-303e75e3.pth'  # noqa
 model = dict(
     data_preprocessor=data_preprocessor,
     backbone=dict(
         type='MyConvNeXt',
-        arch='tiny',
+        arch='small',
         out_indices=[0, 1, 2, 3],
-        drop_path_rate=0.4,
+        drop_path_rate=0.3,
         layer_scale_init_value=1.0,
         gap_before_final_norm=False,
         init_cfg=dict(
             type='Pretrained', checkpoint=checkpoint_file,
             prefix='backbone.'),
-        downsample_ratio=1.0),
+            downsample_ratio=0.6),
     decode_head=dict(
-        in_channels=[96, 192, 384, 768],
-        num_classes=150,
+        in_channels=[96, 192, 384, 768]
     ),
     test_cfg=dict(mode='whole'),
 )
@@ -33,7 +32,7 @@ optim_wrapper = dict(
     paramwise_cfg={
         'decay_rate': 0.9,
         'decay_type': 'stage_wise',
-        'num_layers': 6
+        'num_layers': 12
     },
     constructor='LearningRateDecayOptimizerConstructor',
     loss_scale='dynamic')
@@ -52,6 +51,6 @@ param_scheduler = [
 ]
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
-train_dataloader = dict(batch_size=4)
+train_dataloader = dict(batch_size=8)
 val_dataloader = dict(batch_size=1)
 test_dataloader = val_dataloader

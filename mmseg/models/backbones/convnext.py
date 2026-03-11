@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import build_activation_layer, build_norm_layer
+from mmcv.cnn.bricks import DropPath
 from mmengine.model import BaseModule, ModuleList, Sequential
 
 from mmseg.registry import MODELS
@@ -118,7 +119,7 @@ class ConvNeXtBlock(BaseModule):
             layer_scale_init_value * torch.ones((in_channels)),
             requires_grad=True) if layer_scale_init_value > 0 else None
 
-        self.drop_path = nn.Dropout(
+        self.drop_path = DropPath(
             drop_path_rate) if drop_path_rate > 0. else nn.Identity()
 
     def forward(self, x):
@@ -527,9 +528,14 @@ class MyConvNeXt(BaseModule):
         outs = []
         for i, stage in enumerate(self.stages):
             x = self.downsample_layers[i](x)
+            if i == 0:
+                division = 4
+            else:
+                division = 2
+            self.H, self.W = int(self.H / division), int(self.W / division)
             # i == 0时初次下采样
             if i == 0:
-                h, w = int(H * self.downsample_ratio), int(W * self.downsample_ratio)
+                h, w = int(self.H * self.downsample_ratio), int(self.W * self.downsample_ratio)
                 x = F.interpolate(x, (h, w), mode='bilinear', align_corners=False)
             x = stage(x)
             if i in self.out_indices:
@@ -537,14 +543,7 @@ class MyConvNeXt(BaseModule):
                 if self.gap_before_final_norm:
                     raise NotImplementedError
                 else:
-                    x_ = norm_layer(x)
-                    if i == 0:
-                        division = 4
-                    else:
-                        division = 2
-                    self.H, self.W = int(self.H / division), int(self.W / division)
-                    x_ = F.interpolate(x_, (self.H, self.W), mode='bilinear', align_corners=False)
-                    outs.append(x_)
+                    outs.append(F.interpolate(norm_layer(x), (self.H, self.W), mode='bilinear', align_corners=False))
 
         return tuple(outs)
 
